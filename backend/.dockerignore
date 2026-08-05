@@ -1,0 +1,7 @@
+# Keep the Docker build context small.
+.git
+.gitignore
+Dockerfile
+.dockerignore
+*.md
+_docx_to_md.py

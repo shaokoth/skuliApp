@@ -1,0 +1,26 @@
+# Render Blueprint — deploys the SkuliApp Go API as a Docker web service.
+# Docs: https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: skuliapp-api
+    runtime: docker
+    plan: free
+    region: frankfurt # same region as the Supabase database (eu-central-1)
+    branch: main # deploy on every push to main
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /v1/healthcheck
+    autoDeploy: true
+    envVars:
+      # Apply pending DB migrations on each boot (advisory-locked, safe).
+      - key: SKULI_AUTO_MIGRATE
+        value: "true"
+      # Render generates and persists a strong secret on first deploy.
+      - key: SKULI_JWT_SECRET
+        generateValue: true
+      # Set this in the Render dashboard to your Supabase session-pooler DSN.
+      # Must use port 5432 (session mode) with sslmode=require, and the
+      # password '@' percent-encoded as %40.
+      - key: SKULI_DB_DSN
+        sync: false
